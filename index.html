@@ -96,6 +96,35 @@ h1{font-family:"Suez One",serif;font-size:clamp(46px,14vw,72px);margin:0;line-he
 .back{position:absolute;top:calc(10px + env(safe-area-inset-top));right:12px;border:0;border-radius:999px;cursor:pointer;
   padding:8px 14px;font:600 15px Rubik;color:#fff;background:rgba(0,0,0,.35);backdrop-filter:blur(4px)}
 
+.tools{display:flex;gap:10px;width:100%;justify-content:center}
+.tool{flex:1;max-width:200px;border:2px solid var(--gold);border-radius:14px;padding:11px 8px;cursor:pointer;
+  font:600 16px Rubik;color:#fff;background:rgba(255,255,255,.06)}
+.fav{position:absolute;top:calc(10px + env(safe-area-inset-top));left:12px;border:0;border-radius:999px;cursor:pointer;
+  width:48px;height:48px;font-size:28px;line-height:48px;padding:0;color:#fff;background:rgba(0,0,0,.4);backdrop-filter:blur(4px)}
+.fav.on{color:var(--gold);background:rgba(255,45,135,.8)}
+.side{position:absolute;bottom:calc(30px + env(safe-area-inset-bottom));border:0;border-radius:999px;cursor:pointer;
+  width:52px;height:52px;font-size:22px;padding:0;color:#fff;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)}
+.side:disabled{opacity:.3}
+#prev{right:12px} #toList{left:12px}
+#list{display:none;position:fixed;inset:0;z-index:30;background:#0d0d0d;overflow-y:auto;padding:0 0 30px}
+.lhead{position:sticky;top:0;z-index:2;background:#0d0d0d;padding:calc(12px + env(safe-area-inset-top)) 14px 10px;
+  border-bottom:2px solid var(--pink)}
+.lhead h2{margin:0 0 10px;font-family:"Suez One",serif;font-size:26px;display:flex;justify-content:space-between;align-items:center}
+.lhead h2 button{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:6px 14px;font:600 15px Rubik;cursor:pointer}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid #555;border-radius:999px;padding:7px 12px;background:none;color:#fff;font:600 14px Rubik;cursor:pointer}
+.chip.on{background:var(--gold);color:#111;border-color:var(--gold)}
+.chip.send{background:var(--pink);border-color:var(--pink)}
+.li{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #222;cursor:pointer}
+.li .st{border:0;background:none;font-size:24px;color:#666;cursor:pointer;padding:0 4px}
+.li .st.on{color:var(--gold)}
+.li .tx{flex:1;min-width:0}
+.li .t{font-weight:700;font-size:17px}
+.li .a{font-size:13px;opacity:.7}
+.li.done .t{opacity:.45;text-decoration:line-through}
+.li .ok{font-size:13px;color:#7dff8a;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:80;background:var(--gold);color:#111;
+  font-weight:700;padding:10px 18px;border-radius:999px;display:none}
 footer{margin-top:auto;padding-top:26px;font-size:13px;opacity:.8;text-align:center}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
@@ -106,7 +135,6 @@ footer{margin-top:auto;padding-top:26px;font-size:13px;opacity:.8;text-align:cen
   <header>
     <div class="eng">Rage Night · Tel Aviv</div>
     <h1>הכעס</h1>
-    <p class="sub">נגד המערכת · נגד ביבי · נגד כולם ✊</p>
   </header>
 
   <section id="home">
@@ -123,6 +151,10 @@ footer{margin-top:auto;padding-top:26px;font-size:13px;opacity:.8;text-align:cen
       <button class="small up" id="goUp">תביא פוגו<em>⚡ מהיר ⚡</em></button>
       <button class="small" id="goSlow">תביא כבד<em>🎸 איטי ועצבני 🎸</em></button>
     </div>
+    <div class="tools">
+      <button class="tool" id="openList">📜 רשימת השירים</button>
+      <button class="tool" id="sendFavs">★ שלח מועדפים</button>
+    </div>
     <div class="count" id="count"></div>
   </section>
 
@@ -138,14 +170,32 @@ footer{margin-top:auto;padding-top:26px;font-size:13px;opacity:.8;text-align:cen
     </a>
     <div class="mode" id="mode"></div>
     <button class="another" id="another">תביא עוד אחד 🔥</button>
-    <button class="back" id="back">→ חזרה</button>
+    <button class="back" id="back">→ בית</button>
+    <button class="fav" id="fav" aria-label="מועדף">☆</button>
+    <button class="side" id="prev" aria-label="השיר הקודם">↩</button>
+    <button class="side" id="toList" aria-label="רשימת השירים">📜</button>
   </section>
+
+  <section id="list">
+    <div class="lhead">
+      <h2>רשימת השירים <button id="closeList">✕ סגור</button></h2>
+      <div class="chips">
+        <button class="chip on" id="fAll">הכל</button>
+        <button class="chip" id="fFav">★ מועדפים</button>
+        <button class="chip" id="fLeft">עוד לא שרנו</button>
+        <button class="chip send" id="sendFavs2">📤 שלח מועדפים</button>
+        <button class="chip" id="copyFavs">📋 העתק</button>
+      </div>
+    </div>
+    <div id="rows"></div>
+  </section>
+  <div class="toast" id="toast"></div>
 
   <footer>ערב ג׳אם · 2026 · יאללה בלגן 🏴</footer>
 </main>
 
 <script>
-const DATA = {"songs": [{"id": 1, "title": "Iron Man", "artist": "Black Sabbath", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/black-sabbath/iron-man-chords-3261149"}, {"id": 2, "title": "Don't Bring Me Down", "artist": "Electric Light Orchestra", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/electric-light-orchestra/dont-bring-me-down-chords-139891"}, {"id": 3, "title": "In Bloom", "artist": "Nirvana", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/nirvana/in-bloom-chords-1171571"}, {"id": 4, "title": "You Oughta Know", "artist": "Alanis Morissette", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/alanis-morissette/you-oughta-know-chords-352404"}, {"id": 5, "title": "Basket Case", "artist": "Green Day", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/green-day/basket-case-chords-955966"}, {"id": 6, "title": "Song 2", "artist": "Blur", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/blur/song-2-chords-1050059"}, {"id": 7, "title": "Welcome to the Jungle", "artist": "Guns N' Roses", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/guns-n-roses/welcome-to-the-jungle-chords-1941985"}, {"id": 8, "title": "Bullet with Butterfly Wings", "artist": "The Smashing Pumpkins", "tempo": "slow", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-smashing-pumpkins/bullet-with-butterfly-wings-chords-92367"}, {"id": 9, "title": "I Fought the Law", "artist": "The Clash", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-clash/i-fought-the-law-chords-63686"}, {"id": 10, "title": "Seven Nation Army", "artist": "The White Stripes", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-white-stripes/seven-nation-army-chords-52559"}, {"id": 11, "title": "Revolution", "artist": "The Beatles", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-beatles/revolution-chords-1051645"}, {"id": 12, "title": "Sabotage", "artist": "Beastie Boys", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/beastie-boys/sabotage-chords-3688055"}, {"id": 13, "title": "Anarchy in the UK", "artist": "Sex Pistols", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/sex-pistols/anarchy-in-the-uk-chords-1083828"}, {"id": 14, "title": "Youth Against Fascism", "artist": "Sonic Youth", "tempo": "up", "level": 3, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/sonic-youth/youth-against-fascism-chords-1719591"}, {"id": 15, "title": "Don't Stop Me Now", "artist": "Queen", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/queen/dont-stop-me-now-chords-519549"}, {"id": 16, "title": "Killing in the Name", "artist": "Rage Against the Machine", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/rage-against-the-machine/killing-in-the-name-chords-1792869"}, {"id": 17, "title": "I Just Don't Know What to Do with Myself", "artist": "The White Stripes", "tempo": "slow", "level": 3, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-white-stripes/i-just-dont-know-what-to-do-with-myself-chords-91612"}, {"id": 18, "title": "Fell on Black Days", "artist": "Soundgarden", "tempo": "slow", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/soundgarden/fell-on-black-days-chords-1681009"}, {"id": 19, "title": "Come as You Are", "artist": "Nirvana", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/nirvana/come-as-you-are-chords-1202432"}, {"id": 20, "title": "Just", "artist": "Radiohead", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/radiohead/just-chords-196011"}, {"id": 21, "title": "סוף הדרך", "artist": "רוקפור", "tempo": "slow", "level": 2, "he": true, "chords": "https://www.tab4u.com/tabs/songs/2307_%D7%A8%D7%95%D7%A7%D7%A4%D7%95%D7%A8_-_%D7%A1%D7%95%D7%A3_%D7%94%D7%93%D7%A8%D7%9A.html"}, {"id": 22, "title": "Hate to Say I Told You So", "artist": "The Hives", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-hives/hate-to-say-i-told-you-so-chords-631221"}, {"id": 23, "title": "God Save the Queen", "artist": "Sex Pistols", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/sex-pistols/god-save-the-queen-chords-1083650"}, {"id": 24, "title": "Paranoid", "artist": "Black Sabbath", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/black-sabbath/paranoid-chords-1167469"}, {"id": 25, "title": "הכעס", "artist": "רוקפור", "tempo": "up", "level": 2, "he": true, "chords": "https://www.tab4u.com/tabs/songs/2310_%D7%A8%D7%95%D7%A7%D7%A4%D7%95%D7%A8_-_%D7%94%D7%9B%D7%A2%D7%A1.html"}, {"id": 26, "title": "Blitzkrieg Bop", "artist": "Ramones", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/ramones/blitzkrieg-bop-chords-1431341"}, {"id": 27, "title": "Black Hole Sun", "artist": "Soundgarden", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/soundgarden/black-hole-sun-chords-1102770"}, {"id": 28, "title": "The Man Who Sold the World", "artist": "Nirvana", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/nirvana/the-man-who-sold-the-world-chords-651988"}, {"id": 29, "title": "Come Together", "artist": "The Beatles", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-beatles/come-together-chords-17413"}, {"id": 30, "title": "Live and Let Die", "artist": "Guns N' Roses", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/guns-n-roses/live-and-let-die-chords-726297"}, {"id": 31, "title": "Rooster", "artist": "Alice in Chains", "tempo": "slow", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/alice-in-chains/rooster-chords-1678491"}, {"id": 32, "title": "Bombtrack", "artist": "Rage Against the Machine", "tempo": "up", "level": 3, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/rage-against-the-machine/bombtrack-tabs-25460"}, {"id": 33, "title": "Richard III", "artist": "Supergrass", "tempo": "up", "level": 3, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/supergrass/richard-iii-chords-2837087"}, {"id": 34, "title": "Give It Away", "artist": "Red Hot Chili Peppers", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/red-hot-chili-peppers/give-it-away-chords-1989635"}], "photos": ["01_dori_hadas_roni.jpg", "02_ben_gulli_avi.jpg", "03_joker_tsvia_ran.jpg", "04_shuki_dvorka_ariel.jpg", "05_roni_gulli_dori.jpg", "06_avi_hadas_shuki.jpg", "07_ran_dvorka_ben.jpg", "08_tsvia_joker_ariel.jpg", "09_dori_shuki_gulli.jpg", "10_hadas_roni_avi.jpg", "11_gulli_joker_dvorka.jpg", "12_ben_tsvia_dori.jpg", "13_ariel_ran_hadas.jpg", "14_joker_avi_roni_tsvia.jpg", "15_dvorka_shuki_ariel_ran.jpg"]};
+const DATA = {"songs": [{"id": 1, "title": "Iron Man", "artist": "Black Sabbath", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/black-sabbath/iron-man-chords-3261149"}, {"id": 2, "title": "Don't Bring Me Down", "artist": "Electric Light Orchestra", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/electric-light-orchestra/dont-bring-me-down-chords-139891"}, {"id": 3, "title": "In Bloom", "artist": "Nirvana", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/nirvana/in-bloom-chords-1171571"}, {"id": 4, "title": "You Oughta Know", "artist": "Alanis Morissette", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/alanis-morissette/you-oughta-know-chords-352404"}, {"id": 5, "title": "Basket Case", "artist": "Green Day", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/green-day/basket-case-chords-955966"}, {"id": 6, "title": "Song 2", "artist": "Blur", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/blur/song-2-chords-1050059"}, {"id": 7, "title": "Welcome to the Jungle", "artist": "Guns N' Roses", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/guns-n-roses/welcome-to-the-jungle-chords-1941985"}, {"id": 8, "title": "Bullet with Butterfly Wings", "artist": "The Smashing Pumpkins", "tempo": "slow", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-smashing-pumpkins/bullet-with-butterfly-wings-chords-92367"}, {"id": 9, "title": "I Fought the Law", "artist": "The Clash", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-clash/i-fought-the-law-chords-63686"}, {"id": 10, "title": "Seven Nation Army", "artist": "The White Stripes", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-white-stripes/seven-nation-army-chords-52559"}, {"id": 11, "title": "Revolution", "artist": "The Beatles", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-beatles/revolution-chords-1051645"}, {"id": 12, "title": "Sabotage", "artist": "Beastie Boys", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/beastie-boys/sabotage-chords-3688055"}, {"id": 13, "title": "Anarchy in the UK", "artist": "Sex Pistols", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/sex-pistols/anarchy-in-the-uk-chords-1083828"}, {"id": 14, "title": "Youth Against Fascism", "artist": "Sonic Youth", "tempo": "up", "level": 3, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/sonic-youth/youth-against-fascism-chords-1719591"}, {"id": 15, "title": "Don't Stop Me Now", "artist": "Queen", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/queen/dont-stop-me-now-chords-519549"}, {"id": 16, "title": "Killing in the Name", "artist": "Rage Against the Machine", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/rage-against-the-machine/killing-in-the-name-chords-1792869"}, {"id": 17, "title": "I Just Don't Know What to Do with Myself", "artist": "The White Stripes", "tempo": "slow", "level": 3, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-white-stripes/i-just-dont-know-what-to-do-with-myself-chords-91612"}, {"id": 18, "title": "Fell on Black Days", "artist": "Soundgarden", "tempo": "slow", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/soundgarden/fell-on-black-days-chords-1681009"}, {"id": 19, "title": "Come as You Are", "artist": "Nirvana", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/nirvana/come-as-you-are-chords-1202432"}, {"id": 20, "title": "Just", "artist": "Radiohead", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/radiohead/just-chords-196011"}, {"id": 21, "title": "סוף הדרך", "artist": "רוקפור", "tempo": "slow", "level": 2, "he": true, "chords": "https://www.tab4u.com/tabs/songs/2307_%D7%A8%D7%95%D7%A7%D7%A4%D7%95%D7%A8_-_%D7%A1%D7%95%D7%A3_%D7%94%D7%93%D7%A8%D7%9A.html"}, {"id": 22, "title": "Hate to Say I Told You So", "artist": "The Hives", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-hives/hate-to-say-i-told-you-so-chords-631221"}, {"id": 23, "title": "God Save the Queen", "artist": "Sex Pistols", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/sex-pistols/god-save-the-queen-chords-1083650"}, {"id": 24, "title": "Paranoid", "artist": "Black Sabbath", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/black-sabbath/paranoid-chords-1167469"}, {"id": 25, "title": "הכעס", "artist": "רוקפור", "tempo": "up", "level": 2, "he": true, "chords": "https://www.tab4u.com/tabs/songs/2310_%D7%A8%D7%95%D7%A7%D7%A4%D7%95%D7%A8_-_%D7%94%D7%9B%D7%A2%D7%A1.html"}, {"id": 26, "title": "Blitzkrieg Bop", "artist": "Ramones", "tempo": "up", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/ramones/blitzkrieg-bop-chords-1431341"}, {"id": 27, "title": "Black Hole Sun", "artist": "Soundgarden", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/soundgarden/black-hole-sun-chords-1102770"}, {"id": 28, "title": "The Man Who Sold the World", "artist": "Nirvana", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/nirvana/the-man-who-sold-the-world-chords-651988"}, {"id": 29, "title": "Come Together", "artist": "The Beatles", "tempo": "slow", "level": 1, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/the-beatles/come-together-chords-17413"}, {"id": 30, "title": "Live and Let Die", "artist": "Guns N' Roses", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/guns-n-roses/live-and-let-die-chords-726297"}, {"id": 31, "title": "Rooster", "artist": "Alice in Chains", "tempo": "slow", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/alice-in-chains/rooster-chords-1678491"}, {"id": 32, "title": "Bombtrack", "artist": "Rage Against the Machine", "tempo": "up", "level": 3, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/rage-against-the-machine/bombtrack-tabs-25460"}, {"id": 33, "title": "Richard III", "artist": "Supergrass", "tempo": "up", "level": 3, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/supergrass/richard-iii-chords-2837087"}, {"id": 34, "title": "Give It Away", "artist": "Red Hot Chili Peppers", "tempo": "up", "level": 2, "he": false, "chords": "https://tabs.ultimate-guitar.com/tab/red-hot-chili-peppers/give-it-away-chords-1989635"}], "photos": ["01_dori_hadas_roni.jpg", "02_ben_gulli_avi.jpg", "06_avi_hadas_shuki.jpg", "10_hadas_roni_avi.jpg", "11_gulli_joker_dvorka.jpg", "13_ariel_ran_hadas.jpg", "15_dvorka_shuki_ariel_ran.jpg"]};
 const BASE = "covers/";
 const $ = id => document.getElementById(id);
 const store = {
@@ -185,23 +235,70 @@ function nextPhoto(){
 const isHe = t => /[֐-׿]/.test(t);
 const LABEL = {all: "✊ שיר אקראי ✊", up: "⚡ פוגו ⚡", slow: "🎸 כבד 🎸"};
 
-function show(m){
-  mode = m;
-  const s = nextSong(m), p = nextPhoto();
-  $("mode").textContent = LABEL[m];
+let favs = new Set(store.get("punk.favs") || []);
+const hist = []; let at = -1;   // songs seen tonight, for the back button
+const byId = id => DATA.songs.find(s => s.id === id);
+
+function show(m){ mode = m; open(nextSong(m), LABEL[m]); }
+function open(s, label){
+  played.add(s.id); store.set("punk.played", [...played]);
+  hist.splice(at + 1); hist.push({id: s.id, p: nextPhoto(), label}); at = hist.length - 1;
+  render();
+}
+function render(){
+  const h = hist[at], s = byId(h.id), p = h.p;
+  $("mode").textContent = h.label;
   $("photo").src = BASE + p; $("bg").style.backgroundImage = `url("${BASE + p}")`;
   $("song").textContent = s.title; $("song").className = "song" + (isHe(s.title) ? "" : " ltr");
   $("artist").textContent = "🎤 " + s.artist; $("artist").className = "artist" + (isHe(s.artist) ? "" : " ltr");
   $("card").href = s.chords;
-  $("tap").textContent = s.video ? "👆 לחיצה על התמונה → לשיר (אין אקורדים ברשת)" : "👆 לחיצה על התמונה → אקורדים";
-  $("home").style.display = "none"; $("result").style.display = "block"; document.body.style.overflow = "hidden";
+  paintFav(); $("prev").disabled = at <= 0;
+  $("list").style.display = "none"; $("home").style.display = "none"; $("result").style.display = "block"; document.body.style.overflow = "hidden";
   const c = $("card"); c.classList.remove("enter"); void c.offsetWidth; c.classList.add("enter");
   window.scrollTo({top: 0, behavior: "smooth"});
   updateCount();
 }
+function paintFav(){ const on = favs.has(hist[at].id); $("fav").textContent = on ? "★" : "☆"; $("fav").classList.toggle("on", on); }
+function toggleFav(id){ favs.has(id) ? favs.delete(id) : favs.add(id); store.set("punk.favs", [...favs]); updateCount(); }
 function updateCount(){
   const left = DATA.songs.filter(s => !played.has(s.id)).length;
-  $("count").textContent = `${DATA.songs.length} שירים · נשארו ${left} שעוד לא שרנו`;
+  $("count").textContent = `${DATA.songs.length} שירים · נשארו ${left} שעוד לא שרנו · ★ ${favs.size}`;
+}
+
+// song list
+let filt = "all";
+function drawList(){
+  const rows = DATA.songs.filter(s => filt === "all" || (filt === "fav" ? favs.has(s.id) : !played.has(s.id)));
+  $("rows").innerHTML = rows.length ? "" : '<p style="text-align:center;opacity:.6;padding:30px">אין כאן כלום עדיין</p>';
+  for (const s of rows) {
+    const d = document.createElement("div");
+    d.className = "li" + (played.has(s.id) ? " done" : "");
+    d.innerHTML = `<button class="st${favs.has(s.id) ? " on" : ""}">${favs.has(s.id) ? "★" : "☆"}</button>
+      <div class="tx" dir="auto"><div class="t"></div><div class="a"></div></div>${played.has(s.id) ? '<span class="ok">✓ שרנו</span>' : ""}`;
+    d.querySelector(".t").textContent = s.title; d.querySelector(".a").textContent = s.artist;
+    d.querySelector(".st").onclick = e => { e.stopPropagation(); toggleFav(s.id); drawList(); };
+    d.onclick = () => open(s, "📜 מהרשימה");
+    $("rows").appendChild(d);
+  }
+  ["fAll", "fFav", "fLeft"].forEach(k => $(k).classList.toggle("on", k === {all: "fAll", fav: "fFav", left: "fLeft"}[filt]));
+}
+function openList(){ drawList(); $("list").style.display = "block"; $("list").scrollTop = 0; document.body.style.overflow = "hidden"; }
+
+// favourites out: phone share sheet (WhatsApp etc.), else WhatsApp web; copy as backup
+function favText(){
+  const f = DATA.songs.filter(s => favs.has(s.id));
+  return "★ המועדפים מערב הכעס 🤘\n\n" + f.map((s, i) => `${i + 1}. ${s.title} – ${s.artist}\n${s.chords}`).join("\n\n");
+}
+function toast(m){ const t = $("toast"); t.textContent = m; t.style.display = "block"; setTimeout(() => t.style.display = "none", 1800); }
+function sendFavs(){
+  if (!favs.size) return toast("עוד אין מועדפים – לחצו ☆ על שיר");
+  const text = favText();
+  if (navigator.share) navigator.share({title: "המועדפים מערב הכעס", text}).catch(() => {});
+  else window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
+}
+function copyFavs(){
+  if (!favs.size) return toast("עוד אין מועדפים");
+  navigator.clipboard.writeText(favText()).then(() => toast("הועתק ✓"), () => toast("לא הצליח להעתיק"));
 }
 
 // heart burst on every tap
@@ -220,6 +317,12 @@ function burst(x, y){
 function go(m){ return e => { burst(e.clientX || innerWidth/2, e.clientY || innerHeight/2); setTimeout(() => show(m), 220); }; }
 $("goAll").onclick = go("all"); $("goUp").onclick = go("up"); $("goSlow").onclick = go("slow");
 $("another").onclick = e => { burst(e.clientX, e.clientY); show(mode); };
+$("prev").onclick = () => { if (at > 0) { at--; render(); } };
+$("fav").onclick = e => { toggleFav(hist[at].id); paintFav(); if (favs.has(hist[at].id)) burst(e.clientX, e.clientY); };
+$("toList").onclick = openList; $("openList").onclick = openList;
+$("closeList").onclick = () => { $("list").style.display = "none"; if ($("result").style.display !== "block") document.body.style.overflow = ""; };
+$("fAll").onclick = () => { filt = "all"; drawList(); }; $("fFav").onclick = () => { filt = "fav"; drawList(); }; $("fLeft").onclick = () => { filt = "left"; drawList(); };
+$("sendFavs").onclick = sendFavs; $("sendFavs2").onclick = sendFavs; $("copyFavs").onclick = copyFavs;
 $("back").onclick = () => { $("result").style.display = "none"; document.body.style.overflow = ""; $("home").style.display = "flex"; };
 $("card").addEventListener("click", e => burst(e.clientX, e.clientY));
 
